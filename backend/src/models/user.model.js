@@ -26,10 +26,19 @@ const orderSchema = new Schema({
 
 // User schema
 const userSchema = new Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  firstName: { type: String, required: [true, "please enter a name"] },
+  lastName: { type: String, required: [true, "please enter a last name"] },
+  email: {
+    type: String,
+    required: [true, "Please enter an email"],
+    unique: [true, "email already in use"],
+    lowercase: true,
+    validate: [isEmail, "Please enter a valid email"],
+  },
+  password: {
+    required: [true, "Please enter a password"],
+    minlength: [8, "Minimum password length is 8 characters"],
+  },
   phoneNumber: { type: String },
   addresses: [addressSchema],
   orders: [orderSchema],
