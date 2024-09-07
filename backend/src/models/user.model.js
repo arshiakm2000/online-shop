@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const { isEmail } = require("validator");
+const bcrypt = require("bcrypt");
+
 const Schema = mongoose.Schema;
 
 // Address subdocument schema
@@ -36,6 +39,7 @@ const userSchema = new Schema({
     validate: [isEmail, "Please enter a valid email"],
   },
   password: {
+    type: String,
     required: [true, "Please enter a password"],
     minlength: [8, "Minimum password length is 8 characters"],
   },
