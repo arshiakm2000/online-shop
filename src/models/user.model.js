@@ -52,12 +52,31 @@ const userSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
+// hashing password before saving in db
+userSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
 // Middleware to update the updatedAt field
 userSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
+
+// static method to login user
+userSchema.statics.login = async function (email, password) {
+  const user = await this.findOne({ email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      return user;
+    }
+    throw Error("incorrect password");
+  }
+  throw Error("incorrect email");
+};
 
 const User = mongoose.model("User", userSchema);
 
