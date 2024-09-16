@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const { requireAuth, checkUser } = require("./middleware/authMiddleware");
 const authRoutes = require("./routes/authRoutes");
-
+const userRoutes = require("./routes/userRoutes");
 // express app
 const app = express();
 
@@ -38,6 +38,8 @@ app.get("*", checkUser);
 
 app.use(authRoutes);
 
+app.use("/", requireAuth, userRoutes);
+
 app.get("/", (req, res) => {
-  res.redirect("/signup");
+  res.redirect("/home");
 });

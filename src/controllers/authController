@@ -48,6 +48,10 @@ module.exports.login_get = (req, res) => {
   res.render("login");
 };
 
+module.exports.homeRes = (req, res) => {
+  res.render("home");
+};
+
 module.exports.signup_post = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber } = req.body;
 
