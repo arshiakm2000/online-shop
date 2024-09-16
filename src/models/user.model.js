@@ -1,31 +1,10 @@
 const mongoose = require("mongoose");
 const { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
+const { addressSchema } = require("./address.model");
+const { orderSchema } = require("./order.model");
 
 const Schema = mongoose.Schema;
-
-// Address subdocument schema
-const addressSchema = new Schema({
-  street: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  postalCode: { type: String, required: true },
-  country: { type: String, required: true },
-});
-
-// Order subdocument schema
-const orderSchema = new Schema({
-  productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
-  quantity: { type: Number, required: true },
-  price: { type: Number, required: true },
-  status: {
-    type: String,
-    enum: ["pending", "shipped", "delivered", "cancelled"],
-    default: "pending",
-  },
-  orderDate: { type: Date, default: Date.now },
-  deliveryDate: { type: Date },
-});
 
 // User schema
 const userSchema = new Schema({
@@ -44,8 +23,8 @@ const userSchema = new Schema({
     minlength: [8, "Minimum password length is 8 characters"],
   },
   phoneNumber: { type: String },
-  addresses: [addressSchema],
-  orders: [orderSchema],
+  addresses: [{ type: Schema.Types.ObjectId, ref: "address" }],
+  orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
   role: { type: String, enum: ["customer", "admin"], default: "customer" },
   isActive: { type: Boolean, default: true },
   verifiedEmail: { type: Boolean, default: false }, // Email verified flag
