@@ -5,15 +5,18 @@ const cookieParser = require("cookie-parser");
 const { requireAuth, checkUser } = require("./middleware/authMiddleware");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const retailerRoutes = require("./routes/retailerRoutes");
+require("dotenv").config();
 // express app
 const app = express();
 
 // connect to mongodb
-const dbURI =
-  "mongodb+srv://mmad:12341234@baazarbay.n4bnr.mongodb.net/?retryWrites=true&w=majority&appName=baazarbay";
 
 mongoose
-  .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then((result) => app.listen(3000))
   .catch((err) => console.log(err));
 
@@ -39,7 +42,7 @@ app.get("*", checkUser);
 app.use(authRoutes);
 
 app.use("/", requireAuth, userRoutes);
-
+app.use("/retail", retailerRoutes);
 app.get("/", (req, res) => {
   res.redirect("/home");
 });

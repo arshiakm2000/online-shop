@@ -1,0 +1,6 @@
+//const User = require("../models/user.model");
+
+// controller actions
+module.exports.addItem_get = (req, res) => {
+  res.render("addItem");
+};
