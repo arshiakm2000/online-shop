@@ -1,0 +1,112 @@
+<link rel="stylesheet" href="/styles.css" />
+<form action="/createItem" id = "item" class="form-container">
+  <h2>Add your product</h2>
+  <div class="input-group">
+    <label for="productName">Product Name</label>
+    <input type="text" name="productName" required />
+    <div class="productName error"></div>
+  </div>
+  <div class="input-group">
+    <label for="Quantity">Quantity available</label>
+    <input type="number" name="Quantity" required />
+    <div class="Quantity error"></div>
+  </div>
+  <div class="input-group">
+    <label for="Price">Price</label>
+    <input type="number" name="Price" required />
+    <div class="Price error"></div>
+  </div>
+  <button class="btn">Add Pruduct</button>
+</form>
+<form id = "itemPhoto" class="form-container">
+  <div class="input-group"></div>
+    <label for="Photo">Product photo</label>
+    <input type="file" name="Photo" accept=".jpg,.jpeg" required />
+    <div class="Photo error"></div>
+  </div>
+  
+  <button action="/photoUpload" class="btn">Upload photo</button>
+  
+</form>
+
+<script>
+  const itemForm = document.querySelector("item");
+  const uploadForm = document.querySelector("itemPhoto");
+  const productName = document.querySelector(".productName.error");
+  const Quantity = document.querySelector(".Quantity.error");
+  const Price = document.querySelector(".Price.error");
+  
+  
+
+  itemForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // reset errors
+    productName.textContent = "";
+    Quantity.textContent = "";
+    Price.textContent = "";
+    
+    
+
+    // get values
+    const productName = form.productName.value;
+    const Quantity = form.Quantity.value;
+    const Price = form.Price.value;
+    
+
+    
+      try {
+        const res = await fetch("/createItem", {
+          method: "POST",
+          body: JSON.stringify({
+            productName,
+            Quantity,
+            Price,
+            
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        if (data.errors) {
+          productNameError.textContent = data.errors.productName;
+          QuantityError.textContent = data.errors.Quantity;
+          PriceError.textContent = data.errors.Price;
+          
+        }
+        if (data.user) {
+          location.assign("/");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } 
+
+    
+  );
+  uploadForm.addEventListener("submit", async (e) => {
+    e.preventDefault(); // Prevent form submission
+
+    const formData = new FormData();
+    formData.append('name', document.getElementById('name').value); // Append the 'name' field
+    formData.append('image', document.getElementById('image').files[0]); // Append the 'image' file
+
+    try {
+        const response = await fetch('/photoUpload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) { 
+            alert(`Upload successful! Image URL: ${result.imageUrl}`); // Corrected template literals
+        } else {
+            alert(`Upload failed: ${result.error}`); // Handling the error from the result
+        }
+    } catch (error) {
+        console.error('Error:', error); // Log error to the console
+        alert('Upload failed: ' + error.message); // Display the error message in the alert
+    }
+});
+
+</script>
