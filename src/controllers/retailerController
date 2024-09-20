@@ -1,4 +1,5 @@
 const Item = require("../models/item.model");
+const { getUser } = require("../middleware/authMiddleware");
 
 // controller actions
 module.exports.addItem_get = (req, res) => {
@@ -6,14 +7,18 @@ module.exports.addItem_get = (req, res) => {
 };
 
 module.exports.addItem_post = async (req, res) => {
-  const { productName, Quantity, Price } = req.body;
-  owner = req.body.user._id;
+  console.log(req.body);
+  const { productName, quantity, price } = req.body;
+  const user = await getUser(req.cookies.jwt);
+  console.log(user);
+  const owner = user._id.toString();
+  console.log(productName, quantity, price, owner);
 
   try {
-    const item = await Item.create({ productName, Quantity, Price, owner });
+    const item = await Item.create({ productName, quantity, price, owner });
     res.redirect("/photoUpload?id=${item._id}");
   } catch (err) {
-    const errors = handleErrors(err);
-    res.status(400).json({ errors });
+    console.log(err);
+    res.status(400);
   }
 };

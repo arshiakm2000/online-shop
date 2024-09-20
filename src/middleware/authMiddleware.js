@@ -40,4 +40,22 @@ const checkUser = (req, res, next) => {
   }
 };
 
-module.exports = { requireAuth, checkUser };
+const getUser = async (token) => {
+  if (!token) {
+    throw new Error("No token provided");
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, "grases secret");
+    const user = await User.findById(decodedToken.id);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user; // Return the user if found
+  } catch (err) {
+    throw new Error(err.message || "Token verification failed");
+  }
+};
+module.exports = { requireAuth, checkUser, getUser };

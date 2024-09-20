@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="/styles.css" />
-<form action="/createItem" id = "item" class="form-container">
+<form action="addItem" class="form-container">
   <h2>Add your product</h2>
   <div class="input-group">
     <label for="productName">Product Name</label>
@@ -7,77 +7,59 @@
     <div class="productName error"></div>
   </div>
   <div class="input-group">
-    <label for="Quantity">Quantity available</label>
-    <input type="number" name="Quantity" required />
+    <label for="quantity">Quantity available</label>
+    <input type="number" name="quantity" required />
     <div class="Quantity error"></div>
   </div>
   <div class="input-group">
-    <label for="Price">Price</label>
-    <input type="number" name="Price" required />
+    <label for="price">Price</label>
+    <input type="number" name="price" required />
     <div class="Price error"></div>
   </div>
   <button class="btn">Add Pruduct</button>
 </form>
 
-  
-  <button action="/photoUpload" class="btn">Upload photo</button>
-  
-</form>
-
 <script>
-  const itemForm = document.querySelector("item");
-  
-  const productName = document.querySelector(".productName.error");
-  const Quantity = document.querySelector(".Quantity.error");
-  const Price = document.querySelector(".Price.error");
-  
-  
+  const form = document.querySelector("form");
 
-  itemForm.addEventListener("submit", async (e) => {
+  const productNameError = document.querySelector(".productName.error");
+  const quantityError = document.querySelector(".quantity.error");
+  const priceError = document.querySelector(".price.error");
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     // reset errors
-    productName.textContent = "";
-    Quantity.textContent = "";
-    Price.textContent = "";
-    
-    
+    productNameError.textContent = "";
+    quantityError.textContent = "";
+    priceError.textContent = "";
 
     // get values
     const productName = form.productName.value;
-    const Quantity = form.Quantity.value;
-    const Price = form.Price.value;
-    
+    const quantity = form.quantity.value;
+    const price = form.price.value;
 
-    
-      try {
-        const res = await fetch("/createItem", {
-          method: "POST",
-          body: JSON.stringify({
-            productName,
-            Quantity,
-            Price,
-            
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
-        const data = await res.json();
-        if (data.errors) {
-          productNameError.textContent = data.errors.productName;
-          QuantityError.textContent = data.errors.Quantity;
-          PriceError.textContent = data.errors.Price;
-          
-        }
-        if (data.user) {
-          location.assign("/");
-        }
-      } catch (err) {
-        console.log(err);
+    try {
+      const res = await fetch("addItem", {
+        method: "POST",
+        body: JSON.stringify({
+          productName,
+          quantity,
+          price,
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (data.errors) {
+        productNameError.textContent = data.errors.productName;
+        QuantityError.textContent = data.errors.Quantity;
+        PriceError.textContent = data.errors.Price;
       }
-    } 
-
-    
-  );
-  
-
+      if (data.user) {
+        location.assign("/");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
 </script>
