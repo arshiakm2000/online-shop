@@ -1,6 +1,19 @@
-//const User = require("../models/user.model");
+const Item = require("../models/item.model");
 
 // controller actions
 module.exports.addItem_get = (req, res) => {
   res.render("addItem");
+};
+
+module.exports.addItem_post = async (req, res) => {
+  const { productName, Quantity, Price } = req.body;
+  owner = req.body.user._id;
+
+  try {
+    const item = await Item.create({ productName, Quantity, Price, owner });
+    res.redirect("/photoUpload?id=${item._id}");
+  } catch (err) {
+    const errors = handleErrors(err);
+    res.status(400).json({ errors });
+  }
 };

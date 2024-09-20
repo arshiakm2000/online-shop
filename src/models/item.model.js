@@ -5,6 +5,7 @@ const itemSchema = new Schema({
   productName: { type: String, required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
+  owner: { type: String, required: true },
   imageUrl: [{ type: String }],
 });
 
