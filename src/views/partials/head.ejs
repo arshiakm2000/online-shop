@@ -1,6 +1,23 @@
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/styles.css" />
-  <title>baazarbay | <%= title %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header</title>
 </head>
+<body>
+    <nav>
+        <div>Your Logo</div>
+        <div>
+            <% if (isAuthenticated) { %>
+                <span>Hello, <%= userName %>!</span>
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit">Logout</button>
+                </form>
+            <% } else { %>
+                <a href="/login"><button>Sign In</button></a>
+                <a href="/signup"><button>Sign Up</button></a>
+            <% } %>
+        </div>
+    </nav>
+</body>
+</html>
+

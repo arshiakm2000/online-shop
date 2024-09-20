@@ -18,12 +18,7 @@
   </div>
   <button class="btn">Add Pruduct</button>
 </form>
-<form id = "itemPhoto" class="form-container">
-  <div class="input-group"></div>
-    <label for="Photo">Product photo</label>
-    <input type="file" name="Photo" accept=".jpg,.jpeg" required />
-    <div class="Photo error"></div>
-  </div>
+
   
   <button action="/photoUpload" class="btn">Upload photo</button>
   
@@ -31,7 +26,7 @@
 
 <script>
   const itemForm = document.querySelector("item");
-  const uploadForm = document.querySelector("itemPhoto");
+  
   const productName = document.querySelector(".productName.error");
   const Quantity = document.querySelector(".Quantity.error");
   const Price = document.querySelector(".Price.error");
@@ -83,30 +78,6 @@
 
     
   );
-  uploadForm.addEventListener("submit", async (e) => {
-    e.preventDefault(); // Prevent form submission
-
-    const formData = new FormData();
-    formData.append('name', document.getElementById('name').value); // Append the 'name' field
-    formData.append('image', document.getElementById('image').files[0]); // Append the 'image' file
-
-    try {
-        const response = await fetch('/photoUpload', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (response.ok) { 
-            alert(`Upload successful! Image URL: ${result.imageUrl}`); // Corrected template literals
-        } else {
-            alert(`Upload failed: ${result.error}`); // Handling the error from the result
-        }
-    } catch (error) {
-        console.error('Error:', error); // Log error to the console
-        alert('Upload failed: ' + error.message); // Display the error message in the alert
-    }
-});
+  
 
 </script>
