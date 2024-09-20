@@ -16,7 +16,7 @@ module.exports.addItem_post = async (req, res) => {
 
   try {
     const item = await Item.create({ productName, quantity, price, owner });
-    res.redirect("/photoUpload");
+    res.redirect("${item._id}");
   } catch (err) {
     console.log(err);
     res.status(400);
