@@ -1,21 +1,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css" />
-    <title>baazarBay</title>
+    <title>Header</title>
 </head>
 <body>
-    <nav class="navbar">
-        <div>BaazarBay</div>
+    <nav>
+        <div>Your Logo</div>
         <div>
-            <% if (user) { %>
-                <span>Hello, <%= user.firstName + user.lastName %>!</span>
+            <% if (isAuthenticated) { %>
+                <span>Hello, <%= userName %>!</span>
                 <form action="/logout" method="POST" style="display: inline;">
-                    <button class="logout-button" type="submit">Logout</button>
+                    <button type="submit">Logout</button>
                 </form>
             <% } else { %>
-                <a href="/login"><button class="btn">Sign In</button></a>
-                <a href="/signup"><button class=" btn">Sign Up</button></a>
+                <a href="/login"><button>Sign In</button></a>
+                <a href="/signup"><button>Sign Up</button></a>
             <% } %>
         </div>
     </nav>
