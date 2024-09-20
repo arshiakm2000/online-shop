@@ -16,9 +16,13 @@ module.exports.addItem_post = async (req, res) => {
 
   try {
     const item = await Item.create({ productName, quantity, price, owner });
-    res.redirect("/photoUpload?id=${item._id}");
+    res.redirect("/photoUpload");
   } catch (err) {
     console.log(err);
     res.status(400);
   }
+};
+
+module.exports.photoUpload_get = (req, res) => {
+  res.render("photoUpload");
 };
