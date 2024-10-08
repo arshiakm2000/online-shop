@@ -52,8 +52,9 @@
       const data = await res.json();
       if (data.errors) {
         productNameError.textContent = data.errors.productName;
-        QuantityError.textContent = data.errors.Quantity;
-        PriceError.textContent = data.errors.Price;
+        quantityError.textContent = data.errors.quantity;
+        priceError.textContent = data.errors.price;
+
       }
       if (data.user) {
         location.assign("/");
