@@ -1,4 +1,3 @@
-<%- include("./partials/head")  %>
 <form action="addItem" class="form-container">
   <h2>Add your product</h2>
   <div class="input-group">
@@ -56,8 +55,8 @@
         priceError.textContent = data.errors.price;
 
       }
-      if (data.user) {
-        location.assign("/");
+      if (data.Item) {
+        location.assign(`/uploadPhoto?id=${data.Item}`);
       }
     } catch (err) {
       console.log(err);
