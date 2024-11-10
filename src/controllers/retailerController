@@ -1,5 +1,19 @@
 const Item = require("../models/item.model");
 const { getUser } = require("../middleware/authMiddleware");
+const multer = require("multer");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+require("dotenv").config();
+
+// Configure multer to store files in memory
+const upload = multer({ storage: multer.memoryStorage() });
+// Initialize S3 client with AWS credentials
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 // controller actions
 module.exports.addItem_get = (req, res) => {
@@ -26,4 +40,53 @@ module.exports.addItem_post = async (req, res) => {
 
 module.exports.photoUpload_get = (req, res) => {
   res.render("photoUpload");
+};
+
+module.exports.photoUpload_post = (req, res) => {
+  // Call upload.single("Photo") inside the route handler
+  upload.single("Photo")(req, res, async (err) => {
+    if (err) {
+      console.error("Multer error:", err);
+      return res.status(500).json({ error: "File upload failed" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const id = req.body.id; // Retrieve additional fields from FormData if needed
+    let item = await Item.findById(id);
+    const uniqueFileName = `uploads/${Date.now()}-${req.file.originalname}`;
+
+    // Set up S3 upload parameters
+    const uploadParams = {
+      Bucket: process.env.AWS_BUCKET_NAME, // Your S3 bucket name
+      Key: uniqueFileName, // File name in S3
+      Body: req.file.buffer, // File buffer from multer
+      ContentType: req.file.mimetype, // MIME type of the file
+    };
+
+    try {
+      // Upload file to S3
+      await s3.send(new PutObjectCommand(uploadParams));
+
+      const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFileName}`;
+
+      // Add the file URL to the imageUrl array in the item document
+      item.imageUrl.push(fileUrl);
+      await item.save(); // Save the updated item document
+
+      console.log(await Item.findById(id));
+
+      // Respond with the S3 URL for the uploaded file
+      res.json({
+        message: "Image uploaded successfully!",
+        fileUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFileName}`,
+        id: id,
+      });
+    } catch (error) {
+      console.error("Error uploading to S3:", error);
+      res.status(500).json({ error: "Error uploading image to S3" });
+    }
+  });
 };
