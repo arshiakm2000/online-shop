@@ -58,17 +58,16 @@ module.exports.photoUpload_post = (req, res) => {
     let item = await Item.findById(id);
     const uniqueFileName = `uploads/${Date.now()}-${req.file.originalname}`;
 
-    // Set up S3 upload parameters
-    const uploadParams = {
-      Bucket: process.env.AWS_BUCKET_NAME, // Your S3 bucket name
-      Key: uniqueFileName, // File name in S3
-      Body: req.file.buffer, // File buffer from multer
-      ContentType: req.file.mimetype, // MIME type of the file
-    };
-
     try {
       // Upload file to S3
-      await s3.send(new PutObjectCommand(uploadParams));
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME, // Your S3 bucket name
+          Key: uniqueFileName, // File name in S3
+          Body: req.file.buffer, // File buffer from multer
+          ContentType: req.file.mimetype, // MIME type of the file
+        })
+      );
 
       const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFileName}`;
 
@@ -76,12 +75,10 @@ module.exports.photoUpload_post = (req, res) => {
       item.imageUrl.push(fileUrl);
       await item.save(); // Save the updated item document
 
-      console.log(await Item.findById(id));
-
       // Respond with the S3 URL for the uploaded file
       res.json({
         message: "Image uploaded successfully!",
-        fileUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFileName}`,
+        fileUrl: fileUrl,
         id: id,
       });
     } catch (error) {
